@@ -2,13 +2,16 @@
 #![feature(log_syntax)]
 
 extern crate term;
+extern crate libc;
 use std::io::fs::PathExtensions;
 use std::io::fs;
 use std::io;
+use libc::funcs::c95::stdlib;
 
 enum Color {
     Green,
     Red,
+    Yellow,
     Blank
 }
 
@@ -62,6 +65,7 @@ fn _say (s: &str, col: Color) {
     match col {
         Green => { t.fg(term::color::GREEN).unwrap(); }
         Red => { t.fg(term::color::RED).unwrap(); }
+        Yellow => { t.fg(term::color::BRIGHT_YELLOW).unwrap(); }
         Blank => {}
     }
     (writeln!(t, "{}", s)).unwrap();
@@ -80,6 +84,10 @@ fn say_green (s: &str) {
     _say(s, Green)
 }
 
+fn say_yellow (s: &str) {
+    _say(s, Yellow)
+}
+
 fn main() {
     println!("Hello, world!");
     let path = Path::new("/home/tha/Dev/RUST/PRJ/rust-file-mover");
@@ -90,6 +98,7 @@ fn main() {
 
 enum Action {
     Inside,
+    Up,
     Skip,
     Trash,
     Movie,
@@ -101,6 +110,7 @@ enum Action {
 
 fn get_action(ans: &str) -> Action {
     if ans == "i" { Inside }
+    else if ans == "o" { Up }
     else if ans == "s" { Skip }
     else if ans == "t" { Trash }
     else if ans == "m" { Movie }
@@ -110,28 +120,52 @@ fn get_action(ans: &str) -> Action {
     else { Nothing }
 }
 
-fn all_files(path: &Path) {
-    println!("{}", path.display());
-    let a = ask("(Skip | Trash | Inside-dir | Movie | mUsic | Var | Quit )");
+fn all_files(path: &Path) -> Option<()> {
+    say_yellow(path.as_str().unwrap());
+    let a = ask("[Skip | Trash | Inside-dir | Outside-dir | Movie | mUsic | Var | Quit ]");
     let ans = a.as_slice().trim();
     let res = get_action(ans);
     match res {
-        Inside if path.is_dir() => { visit_dirs(path, all_files); }
-        Skip => { /*next */ say("skipping"); }
-        Trash => { say("moving to trash.."); }
-        Movie => { say("moving to movies.."); }
-        Music => { say("moving to music.."); }
-        Var => { say("moving to var.."); }
-        Quit => { say("bye bye"); }
+        Inside if path.is_dir() => {
+            say_green("entering dir");
+            visit_dirs(path, all_files);
+        }
+        Skip => {
+            say("skipping");
+        }
+        Trash => {
+            say("moving to trash..");
+        }
+        Movie => {
+            say("moving to movies..");
+        }
+        Music => {
+            say("moving to music..");
+        }
+        Var => {
+            say("moving to var..");
+        }
+        Quit => {
+            say("bye bye");
+            unsafe { libc::exit(0 as libc::c_int); }
+        }
+        Up => {
+            say_green("leaving dir");
+            return None;
+        }
         _ => { say_red("option not valid"); }
     }
+    Some(())
 }
 
-fn visit_dirs(dir: &Path, cb: |&Path|) -> io::IoResult<()> {
+fn visit_dirs(dir: &Path, cb: |&Path| -> Option<()>) -> io::IoResult<()> {
     if dir.is_dir() {
         let contents = try!(fs::readdir(dir));
         for entry in contents.iter() {
-            cb(entry);
+            match cb(entry) {
+                Some(_) => {}
+                None => break
+            };
         }
         Ok(())
     } else {
