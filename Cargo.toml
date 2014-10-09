@@ -1,0 +1,5 @@
+[package]
+
+name = "rust-file-mover"
+version = "0.0.1"
+authors = ["Mattia Gheda <ghedamat@gmail.com>"]

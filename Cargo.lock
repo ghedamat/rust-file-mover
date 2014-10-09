@@ -1,0 +1,4 @@
+[root]
+name = "rust-file-mover"
+version = "0.0.1"
+
