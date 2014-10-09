@@ -45,7 +45,7 @@ macro_rules! ask(
 )
 
 fn _ask(question: &str, col: Color) -> String {
-    say(question, col);
+    _say(question, col);
     std::io::stdio::stdin().read_line().unwrap()
 }
 
@@ -57,7 +57,7 @@ fn ask_red(question: &str) -> String {
     _ask(question, Red)
 }
 
-fn say (s: &str, col: Color) {
+fn _say (s: &str, col: Color) {
     let mut t = term::stdout().unwrap();
     match col {
         Green => { t.fg(term::color::GREEN).unwrap(); }
@@ -68,33 +68,78 @@ fn say (s: &str, col: Color) {
     t.reset().unwrap();
 }
 
+fn say (s: &str) {
+    _say(s, Blank)
+}
+
 fn say_red (s: &str) {
-    say(s, Red)
+    _say(s, Red)
 }
 
 fn say_green (s: &str) {
-    say(s, Green)
+    _say(s, Green)
 }
 
 fn main() {
     println!("Hello, world!");
     let path = Path::new("/home/tha/Dev/RUST/PRJ/rust-file-mover");
-    let mut arr = Vec::new();
-    visit_dirs(&mut arr, &path);
     say_red("reading directory:");
-    all_files(&mut arr);
+    visit_dirs(&path, all_files);
     say_red("bye");
 }
 
+enum Action {
+    Inside,
+    Skip,
+    Trash,
+    Movie,
+    Music,
+    Var,
+    Quit,
+    Nothing
+}
 
-fn all_files(arr: &mut Vec<String>) {
-    //arr.sort_by(|a, b| a.cmp(b));
-    for a in arr.iter() {
-        println!("{}", a);
-        let a = ask_red("what should I do?");
+fn get_action(ans: &str) -> Action {
+    if ans == "i" { Inside }
+    else if ans == "s" { Skip }
+    else if ans == "t" { Trash }
+    else if ans == "m" { Movie }
+    else if ans == "u" { Music }
+    else if ans == "v" { Var }
+    else if ans == "q" { Quit }
+    else { Nothing }
+}
+
+fn all_files(path: &Path) {
+    println!("{}", path.display());
+    let a = ask("(Skip | Trash | Inside-dir | Movie | mUsic | Var | Quit )");
+    let ans = a.as_slice().trim();
+    let res = get_action(ans);
+    match res {
+        Inside if path.is_dir() => { visit_dirs(path, all_files); }
+        Skip => { /*next */ say("skipping"); }
+        Trash => { say("moving to trash.."); }
+        Movie => { say("moving to movies.."); }
+        Music => { say("moving to music.."); }
+        Var => { say("moving to var.."); }
+        Quit => { say("bye bye"); }
+        _ => { say_red("option not valid"); }
     }
 }
 
+fn visit_dirs(dir: &Path, cb: |&Path|) -> io::IoResult<()> {
+    if dir.is_dir() {
+        let contents = try!(fs::readdir(dir));
+        for entry in contents.iter() {
+            cb(entry);
+        }
+        Ok(())
+    } else {
+        Err(io::standard_error(io::InvalidInput))
+    }
+}
+
+/*
 // one possible implementation of fs::walk_dir only visiting files
 fn visit_dirs<'a>(arr: &mut Vec<String>, dir: &Path) -> io::IoResult<()>{
     if dir.is_dir() {
@@ -117,3 +162,4 @@ fn visit_dirs<'a>(arr: &mut Vec<String>, dir: &Path) -> io::IoResult<()>{
         Err(io::standard_error(io::InvalidInput))
     }
 }
+*/
