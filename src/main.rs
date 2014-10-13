@@ -2,14 +2,23 @@
 #![feature(log_syntax)]
 
 extern crate term;
+extern crate serialize;
 use std::io::fs::PathExtensions;
 use std::io::fs;
 use std::io;
 
 mod cli;
 mod action;
+mod config;
 
 fn main() {
+
+    //let dec= toml::decode(value);
+
+    //println!("{:s}", cfg.to_str());
+    let paths = config::read_config();
+    println!("{}", paths.unwrap().movie);
+
     let path = Path::new("/home/tha/Dev/RUST/PRJ/rust-file-mover");
     cli::say_green("Working directory:");
     cli::say_green(path.as_str().unwrap());

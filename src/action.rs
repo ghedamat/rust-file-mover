@@ -33,15 +33,19 @@ impl Action {
             }
             Trash => {
                 cli::say("moving to trash..");
+                //trash(path)
             }
             Movie => {
                 cli::say("moving to movies..");
+                //movies(path)
             }
             Music => {
                 cli::say("moving to music..");
+                //music(path)
             }
             Var => {
                 cli::say("moving to var..");
+                //var(path)
             }
             Quit => {
                 cli::say("bye bye");
