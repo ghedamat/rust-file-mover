@@ -15,7 +15,7 @@ pub struct TomlManifest {
     pub paths: Option<Box<TomlPaths>>
 }
 
-pub fn read_config() -> Option<Box<TomlPaths>> {
+pub fn read_config() -> Box<TomlPaths> {
 
     let contents = match File::open(&Path::new("config.toml")).read_to_string() {
         Ok(c) => c,
@@ -26,9 +26,12 @@ pub fn read_config() -> Option<Box<TomlPaths>> {
         None => fail!("Error: Failed to parse config file")
     };
     let mut d = toml::Decoder::new(toml::Table(config));
-    let toml_manifest: Option<Box<TomlManifest>> = match Decodable::decode(&mut d) {
-        Ok(t) => Some(t),
+    let toml_manifest: Box<TomlManifest> = match Decodable::decode(&mut d) {
+        Ok(t) => t,
         Err(e) => fail!(format!("Error: Failed to parse config file, {}", e))
     };
-    toml_manifest.unwrap().paths
+    match toml_manifest.paths {
+        Some(p) => p,
+        None => fail!("Error: Failed to parse [paths] option in config file")
+    }
 }

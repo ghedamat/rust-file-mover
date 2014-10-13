@@ -1,1 +1,5 @@
-[ash = "/home/tha/trash"
+[paths]
+movie = "/home/tha/movies"
+music = "/home/tha/music"
+var = "/home/tha/var"
+trash = "/home/tha/trash"

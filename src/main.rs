@@ -1,25 +1,46 @@
-#![feature(macro_rules)]
+#![feature(phase, macro_rules)]
 #![feature(log_syntax)]
 
 extern crate term;
 extern crate serialize;
+extern crate docopt;
+#[phase(plugin)] extern crate docopt_macros;
+
 use std::io::fs::PathExtensions;
 use std::io::fs;
 use std::io;
+use std::os;
+use docopt::FlagParser;
 
 mod cli;
 mod action;
 mod config;
+docopt!(Args, "
+Usage: rust-file-mover [PATH]
+       rust-file-mover (--help | --version)
+
+If PATH it's not supplied it will default to cwd
+
+Options:
+    -h, --help         Show this message.
+    --version          Show the version of rustc.
+")
 
 fn main() {
+    let args: Args = FlagParser::parse().unwrap_or_else(|e| e.exit());
+    println!("{}", args.arg_PATH);
 
-    //let dec= toml::decode(value);
+    let dirname = if args.arg_PATH.as_slice() == "" {
+        String::from_str(os::getcwd().as_str().unwrap())
+    } else {
+        args.arg_PATH
+    };
 
-    //println!("{:s}", cfg.to_str());
+
     let paths = config::read_config();
-    println!("{}", paths.unwrap().movie);
+    println!("{}", paths.movie);
 
-    let path = Path::new("/home/tha/Dev/RUST/PRJ/rust-file-mover");
+    let path = Path::new(dirname);
     cli::say_green("Working directory:");
     cli::say_green(path.as_str().unwrap());
     match visit_dirs(&path, process_dir) {
