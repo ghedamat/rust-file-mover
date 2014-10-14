@@ -34,20 +34,20 @@ fn main() {
         args.arg_PATH
     };
 
-    let paths = config::read_config();
+    let config = config::read_config();
 
     let path = Path::new(dirname);
     cli::say_green("Selected directory:");
     cli::say_green(path.as_str().unwrap());
-    paths.print_config();
-    match visit_dirs(&path, process_dir) {
+    config.print_config();
+    match visit_dirs(&config, &path, process_dir) {
         Ok(()) => {}
         Err(m) => { println!("Error: {}", m) }
     }
     cli::say_red("Bye!");
 }
 
-fn process_dir(path: &Path) -> Option<()> {
+fn process_dir(config: &Box<config::TomlPaths>, path: &Path) -> Option<()> {
     loop {
         let a = if path.is_dir() {
             cli::say_red("Processing dir");
@@ -60,11 +60,11 @@ fn process_dir(path: &Path) -> Option<()> {
         };
         let ans = a.as_slice().trim();
         let act = action::get_action(ans);
-        match act.handle(path) {
+        match act.handle(config, path) {
             action::Next => { break }
             action::Out => { return None; }
             action::In => {
-                match visit_dirs(path, process_dir) {
+                match visit_dirs(config, path, process_dir) {
                     Ok(()) => {}
                     Err(m) => { println!("Error: {}", m) }
                 }
@@ -75,11 +75,11 @@ fn process_dir(path: &Path) -> Option<()> {
     Some(())
 }
 
-fn visit_dirs(dir: &Path, cb: |&Path| -> Option<()>) -> io::IoResult<()> {
+fn visit_dirs(config: &Box<config::TomlPaths>, dir: &Path, cb: |&Box<config::TomlPaths>, &Path| -> Option<()>) -> io::IoResult<()> {
     if dir.is_dir() {
         let contents = try!(fs::readdir(dir));
         for entry in contents.iter() {
-            match cb(entry) {
+            match cb(config, entry) {
                 Some(_) => {}
                 None => break
             };

@@ -1,6 +1,8 @@
 extern crate libc;
+use std::io::fs;
 use std::io::fs::PathExtensions;
 use cli;
+use config;
 
 pub enum Action {
     Inside,
@@ -21,8 +23,16 @@ pub enum ActionResult {
     In
 }
 
+fn movePath(dest: &String, path: &Path) {
+    let newpath = dest.clone().append(path.filestem_str().unwrap());
+    match fs::rename(path, &Path::new(newpath.as_slice())) {
+        Ok(e) => cli::say_green("Success!"),
+        Err(e) => fail!("Fatal: {}", e)
+    }
+}
+
 impl Action {
-    pub fn handle(&self, path: &Path) -> ActionResult {
+    pub fn handle(&self, config: &Box<config::TomlPaths>, path: &Path) -> ActionResult {
         match *self {
             Inside if path.is_dir() => {
                 cli::say("Entering dir..");
@@ -33,19 +43,19 @@ impl Action {
             }
             Trash => {
                 cli::say("moving to trash..");
-                //trash(path)
+                movePath(&config.trash, path);
             }
             Movie => {
                 cli::say("moving to movies..");
-                //movies(path)
+                movePath(&config.movie, path);
             }
             Music => {
                 cli::say("moving to music..");
-                //music(path)
+                movePath(&config.music, path);
             }
             Var => {
                 cli::say("moving to var..");
-                //var(path)
+                movePath(&config.var, path);
             }
             Quit => {
                 cli::say("bye bye");
