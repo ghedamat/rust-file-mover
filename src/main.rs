@@ -57,13 +57,13 @@ fn process_dir(config: &Box<config::TomlPaths>, path: &Path) -> Option<()> {
         let a = if path.is_dir() {
             cli::say_red("Processing dir");
             cli::say_yellow(format!("{}/", path.as_str().unwrap()).as_slice());
-            cli::ask("[Skip | Trash | Inside-dir | Outside-dir | Movie | mUsic | Var | Quit ]")
+            cli::ask("[Skip | Trash | Inside-dir | Outside-dir | Movie | mUsic | Var | Custom | Quit ]")
         } else {
             cli::say_green("Processing file");
             cli::say_yellow(path.as_str().unwrap());
-            cli::ask("[Skip | Trash | Outside-dir | Movie | mUsic | Var | Quit ]")
+            cli::ask("[Skip | Trash | Outside-dir | Movie | mUsic | Var | Custom | Quit ]")
         };
-        let ans = a.as_slice().trim();
+        let ans = a.as_slice();
         let act = action::get_action(ans);
         match act.handle(config, path) {
             action::Next => { break }

@@ -11,7 +11,9 @@ enum Color {
 
 fn _ask(question: &str, col: Color) -> String {
     _say(question, col);
-    std::io::stdio::stdin().read_line().unwrap()
+    let mut s = std::io::stdio::stdin().read_line().unwrap();
+    s.pop(); // XXX terrible terrible
+    s
 }
 
 pub fn ask(question: &str) -> String {

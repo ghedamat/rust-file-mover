@@ -13,6 +13,7 @@ pub enum Action {
     Music,
     Var,
     Quit,
+    Custom,
     Nothing
 }
 
@@ -66,6 +67,10 @@ impl Action {
                 cli::say("bye bye");
                 unsafe { libc::exit(0 as libc::c_int); }
             }
+            Custom => {
+                let dir = cli::ask("where should I move this?");
+                movePath(&dir, path);
+            }
             Up => {
                 cli::say("Leaving dir..");
                 return Out;
@@ -88,5 +93,6 @@ pub fn get_action(ans: &str) -> Action {
     else if ans == "u" { Music }
     else if ans == "v" { Var }
     else if ans == "q" { Quit }
+    else if ans == "c" { Custom }
     else { Nothing }
 }
