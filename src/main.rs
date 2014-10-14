@@ -35,7 +35,7 @@ fn main() {
         args.arg_PATH
     };
     let cfg_path = if args.flag_c.as_slice() == "" {
-        String::from_str("~/.rust-file-mover.toml")
+        String::from_str(os::homedir().unwrap().as_str().unwrap()).add(&String::from_str("/.rust-file-mover.toml"))
     } else {
         args.flag_c
     };
