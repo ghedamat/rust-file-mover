@@ -24,7 +24,12 @@ pub enum ActionResult {
 }
 
 fn movePath(dest: &String, path: &Path) {
-    let newpath = dest.clone().append(path.filestem_str().unwrap());
+    let newpath = if path.is_dir() {
+        dest.clone().append("/").append(path.filestem_str().unwrap())
+    } else {
+        dest.clone().append("/").append(path.filename_str().unwrap())
+    };
+    println!("Moving to {}", newpath);
     match fs::rename(path, &Path::new(newpath.as_slice())) {
         Ok(e) => cli::say_green("Success!"),
         Err(e) => fail!("Fatal: {}", e)
