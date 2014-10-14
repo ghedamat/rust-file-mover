@@ -67,7 +67,7 @@ impl Action {
 pub fn get_action(ans: &str) -> Action {
     if ans == "i" { Inside }
     else if ans == "o" { Up }
-    else if ans == "s" { Skip }
+    else if ans == "s" || ans == "n" { Skip }
     else if ans == "t" { Trash }
     else if ans == "m" { Movie }
     else if ans == "u" { Music }

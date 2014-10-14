@@ -17,18 +17,16 @@ mod action;
 mod config;
 docopt!(Args, "
 Usage: rust-file-mover [PATH]
-       rust-file-mover (--help | --version)
+       rust-file-mover (--help)
 
 If PATH it's not supplied it will default to cwd
 
 Options:
     -h, --help         Show this message.
-    --version          Show the version of rustc.
 ")
 
 fn main() {
     let args: Args = FlagParser::parse().unwrap_or_else(|e| e.exit());
-    println!("{}", args.arg_PATH);
 
     let dirname = if args.arg_PATH.as_slice() == "" {
         String::from_str(os::getcwd().as_str().unwrap())
@@ -36,13 +34,12 @@ fn main() {
         args.arg_PATH
     };
 
-
     let paths = config::read_config();
-    println!("{}", paths.movie);
 
     let path = Path::new(dirname);
-    cli::say_green("Working directory:");
+    cli::say_green("Selected directory:");
     cli::say_green(path.as_str().unwrap());
+    paths.print_config();
     match visit_dirs(&path, process_dir) {
         Ok(()) => {}
         Err(m) => { println!("Error: {}", m) }
@@ -54,7 +51,7 @@ fn process_dir(path: &Path) -> Option<()> {
     loop {
         let a = if path.is_dir() {
             cli::say_red("Processing dir");
-            cli::say_yellow(path.as_str().unwrap());
+            cli::say_yellow(format!("{}/", path.as_str().unwrap()).as_slice());
             cli::ask("[Skip | Trash | Inside-dir | Outside-dir | Movie | mUsic | Var | Quit ]")
         } else {
             cli::say_green("Processing file");
@@ -66,7 +63,12 @@ fn process_dir(path: &Path) -> Option<()> {
         match act.handle(path) {
             action::Next => { break }
             action::Out => { return None; }
-            action::In => { visit_dirs(path, process_dir); }
+            action::In => {
+                match visit_dirs(path, process_dir) {
+                    Ok(()) => {}
+                    Err(m) => { println!("Error: {}", m) }
+                }
+            }
             action::Repeat => {}
         };
     }
@@ -84,6 +86,6 @@ fn visit_dirs(dir: &Path, cb: |&Path| -> Option<()>) -> io::IoResult<()> {
         }
         Ok(())
     } else {
-        Err(io::standard_error(io::InvalidInput))
+        Err(io::standard_error(io::FileNotFound))
     }
 }

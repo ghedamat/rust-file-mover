@@ -5,6 +5,7 @@ enum Color {
     Green,
     Red,
     Yellow,
+    Blue,
     Blank
 }
 
@@ -27,6 +28,7 @@ fn _say (s: &str, col: Color) {
         Green => { t.fg(term::color::GREEN).unwrap(); }
         Red => { t.fg(term::color::RED).unwrap(); }
         Yellow => { t.fg(term::color::BRIGHT_YELLOW).unwrap(); }
+        Blue => { t.fg(term::color::BRIGHT_BLUE).unwrap(); }
         Blank => {}
     }
     (writeln!(t, "{}", s)).unwrap();
@@ -47,5 +49,9 @@ pub fn say_green (s: &str) {
 
 pub fn say_yellow (s: &str) {
     _say(s, Yellow)
+}
+
+pub fn say_blue (s: &str) {
+    _say(s, Blue)
 }
 
