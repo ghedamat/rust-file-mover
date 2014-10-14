@@ -9,5 +9,7 @@ git = "https://github.com/alexcrichton/toml-rs"
 
 [dependencies.docopt]
 git = "https://github.com/docopt/docopt.rs"
+rev = "21ce1190ef7631f71e52de5e13eb4d131564b82e"
 [dependencies.docopt_macros]
 git = "https://github.com/docopt/docopt.rs"
+rev = "21ce1190ef7631f71e52de5e13eb4d131564b82e"

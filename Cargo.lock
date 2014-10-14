@@ -2,26 +2,26 @@
 name = "rust-file-mover"
 version = "0.0.1"
 dependencies = [
- "docopt 0.6.4 (git+https://github.com/docopt/docopt.rs#21ce1190ef7631f71e52de5e13eb4d131564b82e)",
- "docopt_macros 0.6.4 (git+https://github.com/docopt/docopt.rs#21ce1190ef7631f71e52de5e13eb4d131564b82e)",
- "toml 0.1.0 (git+https://github.com/alexcrichton/toml-rs#05c1eb420f54569336b8481c28a46b5a7c51ec99)",
+ "docopt 0.6.4 (git+https://github.com/docopt/docopt.rs?ref=21ce1190ef7631f71e52de5e13eb4d131564b82e#21ce1190ef7631f71e52de5e13eb4d131564b82e)",
+ "docopt_macros 0.6.4 (git+https://github.com/docopt/docopt.rs?ref=21ce1190ef7631f71e52de5e13eb4d131564b82e#21ce1190ef7631f71e52de5e13eb4d131564b82e)",
+ "toml 0.1.0 (git+https://github.com/alexcrichton/toml-rs#8a3ba4c65cfa22a3d924293a1fb3a70bfac5e66c)",
 ]
 
 [[package]]
 name = "docopt"
 version = "0.6.4"
-source = "git+https://github.com/docopt/docopt.rs#21ce1190ef7631f71e52de5e13eb4d131564b82e"
+source = "git+https://github.com/docopt/docopt.rs?ref=21ce1190ef7631f71e52de5e13eb4d131564b82e#21ce1190ef7631f71e52de5e13eb4d131564b82e"
 
 [[package]]
 name = "docopt_macros"
 version = "0.6.4"
-source = "git+https://github.com/docopt/docopt.rs#21ce1190ef7631f71e52de5e13eb4d131564b82e"
+source = "git+https://github.com/docopt/docopt.rs?ref=21ce1190ef7631f71e52de5e13eb4d131564b82e#21ce1190ef7631f71e52de5e13eb4d131564b82e"
 dependencies = [
- "docopt 0.6.4 (git+https://github.com/docopt/docopt.rs#21ce1190ef7631f71e52de5e13eb4d131564b82e)",
+ "docopt 0.6.4 (git+https://github.com/docopt/docopt.rs?ref=21ce1190ef7631f71e52de5e13eb4d131564b82e#21ce1190ef7631f71e52de5e13eb4d131564b82e)",
 ]
 
 [[package]]
 name = "toml"
 version = "0.1.0"
-source = "git+https://github.com/alexcrichton/toml-rs#05c1eb420f54569336b8481c28a46b5a7c51ec99"
+source = "git+https://github.com/alexcrichton/toml-rs#8a3ba4c65cfa22a3d924293a1fb3a70bfac5e66c"
 
