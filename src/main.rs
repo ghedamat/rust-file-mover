@@ -16,12 +16,13 @@ mod cli;
 mod action;
 mod config;
 docopt!(Args, "
-Usage: rust-file-mover [PATH]
+Usage: rust-file-mover [-c CFG] [PATH]
        rust-file-mover (--help)
 
 If PATH it's not supplied it will default to cwd
 
 Options:
+    -c CFG   Specify config file
     -h, --help         Show this message.
 ")
 
@@ -33,8 +34,12 @@ fn main() {
     } else {
         args.arg_PATH
     };
-
-    let config = config::read_config();
+    let cfg_path = if args.flag_c.as_slice() == "" {
+        String::from_str("~/.rust-move-files.toml")
+    } else {
+        args.flag_c
+    };
+    let config = config::read_config(cfg_path);
 
     let path = Path::new(dirname);
     cli::say_green("Selected directory:");

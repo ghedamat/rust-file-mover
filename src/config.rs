@@ -16,9 +16,9 @@ pub struct TomlManifest {
     pub paths: Option<Box<TomlPaths>>
 }
 
-pub fn read_config() -> Box<TomlPaths> {
+pub fn read_config(cfg_path: String) -> Box<TomlPaths> {
 
-    let contents = match File::open(&Path::new("~/.rust-move-files.toml")).read_to_string() {
+    let contents = match File::open(&Path::new(cfg_path)).read_to_string() {
         Ok(c) => c,
         Err(_) => fail!("Error: Cannot read config file")
     };
